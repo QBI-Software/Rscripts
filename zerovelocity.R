@@ -10,6 +10,7 @@
 #   R will need the following packages installed:
 #          1. plyr
 #          2. optparse
+#          3. xlsx
 #   To run: 
 #     1. Save this file to the directory above your data files
 #     2. The default input data directory is data\\input
@@ -31,7 +32,8 @@
 # GNU General Public License for more details.
 #################################################################################
 library(plyr)
-library("optparse")
+library(optparse)
+library(xlsx)
 
 option_list = list(
   make_option(c("-d", "--dir"), type="character", default="data\\input", 
@@ -48,30 +50,42 @@ if (opt$help){
   stop("Several arguments can be supplied or just accept defaults", call.=FALSE)
 }
 ##### CONFIGURE HERE ############
-#Input directory (edit this if necessary or accept default)
+#Input directory 
+#(Note, if relative path then make sure current working directory is set to script's dir 
+# with Session->set working directory -> To source location
+# check with "getwd()" at the console)
 # eg datadir <- "D:\\Projects\\Meunier_tracking\\vanessa\\data\\input"
 datadir <- opt$dir
+
+#Output directory
+outputdir <- file.path(datadir, "output")
 
 #File must start with this in the name
 linkspattern <-"Links in tracks statistics"
 
 #Output files with this suffix
-zerovelocity <- opt$out
+# eg suffix <- "_ZeroVelocity.csv"
+suffix <- opt$out
+
 ##########Methods################
 
 pc <- function(zerocount,totalcount){
   pc<- (zerocount/totalcount) * 100
 }
 
+fileid <- function(linksfile){
+  parts <- strsplit(linksfile,'.xls')
+  fileid <- strsplit(parts[[1]],'_')
+  fileid <- fileid[[1]][2]
+}
 ##########Process data###########
+
 #####Loop through directory
 for (linksfile in list.files(datadir)){
   if (grepl(linkspattern,linksfile)){
     #extract ID
-    parts <- strsplit(linksfile,'.xls')
-    fileid <- strsplit(parts[[1]],'_')
-    fileid <- fileid[[1]][2]
-    outputfilename <- paste(fileid, zerovelocity, sep="")
+    fileid <- fileid(linksfile)
+    outputfilename <- paste(fileid, suffix, sep="")
     #####Calculate frequency of zero velocity in tracks
     df_links <- read.delim(file.path(datadir, linksfile),  header = TRUE, sep = '\t')
     ## Get unique IDs
@@ -82,11 +96,14 @@ for (linksfile in list.files(datadir)){
     df_trackids$countzerov <- y[,1]
     df_trackids$totalspots <- rowSums(y)
     df_trackids$percentage <- mapply(pc,df_trackids$countzerov,df_trackids$totalspots)
-    #Output file as csv
-    write.csv(df_trackids, file = file.path(datadir, "output", outputfilename))
+    #Output file as csv and excel (combined)
+    write.csv(df_trackids, file = file.path(outputdir, outputfilename))
+    write.xlsx(x = df_trackids, file = file.path(outputdir,"all_zerovelocity.xlsx"),
+               sheetName = fileid, row.names = FALSE)
+    print(paste("Saving file: ", outputfilename))
   }
 }
   
-
+print("Processing complete")
 
 

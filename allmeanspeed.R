@@ -52,34 +52,41 @@ if (opt$help){
 ##### CONFIGURE HERE ############
 #Input directory (edit this if necessary or accept default)
 # eg datadir <- "D:\\Projects\\Meunier_tracking\\vanessa\\data\\input"
-datadir <- opt$dir
+#datadir <- opt$dir
+datadir <- "D:\\Projects\\Meunier_tracking\\vanessa\\data\\input"
+
+#Output directory
+outputdir <- file.path(datadir, "output")
 
 #File must start with this in the name
 linkspattern <-"Track statistics"
 
 #Output files with this suffix
 outputfilename <- opt$out
-outputfile <- file.path(datadir, "output", outputfilename)
+outputfile <- file.path(outputdir, outputfilename)
 ##########Methods################
 
 pc <- function(zerocount,totalcount){
   pc<- (zerocount/totalcount) * 100
 }
 
+fileid <- function(linksfile){
+  parts <- strsplit(linksfile,'.xls')
+  fileid <- strsplit(parts[[1]],'_')
+  fileid <- fileid[[1]][2]
+}
 ##########Process data###########
 #####Loop through directory
 for (linksfile in list.files(datadir)){
   if (grepl(linkspattern,linksfile)){
     print(paste("Loading file: ", linksfile))
     #extract ID
-    parts <- strsplit(linksfile,'.xls')
-    fileid <- strsplit(parts[[1]],'_')
-    fileid <- fileid[[1]][2]
+    fileid <- fileid(linksfile)
     ##### Read file data
     df_links <- read.delim(file.path(datadir, linksfile),  header = TRUE, sep = '\t')
     ## Get unique IDs
-    df_trackids <- data.frame(df_links$TRACK_ID,df_links$TRACK_MEAN_SPEED)
-    colnames(df_trackids) <- c(paste(fileid,"_TRACK_ID", sep=""), paste(fileid,"_TRACK_MEAN_SPEED", sep=""))
+    df_trackids <- data.frame(df_links$TRACK_MEAN_SPEED)
+    colnames(df_trackids) <- c(paste0(fileid,"_TRACK_MEAN_SPEED"))
     ## Append to existing file if it exists
     if (file.exists(outputfile)){
       all_trackids <- read.csv(outputfile, header=TRUE, check.names = FALSE, as.is = TRUE)
@@ -89,7 +96,7 @@ for (linksfile in list.files(datadir)){
     print(paste("Saving file: ", outputfile))
   }
 }
-  
+print("Processing complete")
 
 
 
