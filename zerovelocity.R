@@ -74,12 +74,13 @@ pc <- function(zerocount,totalcount){
 }
 
 fileid <- function(linksfile){
-  parts <- strsplit(linksfile,'.xls')
-  fileid <- strsplit(parts[[1]],'_')
-  fileid <- fileid[[1]][2]
+  parts <- strsplit(linksfile,'\\.')
+  fileparts <- strsplit(parts[[1]],'_')
+  fileid <- fileparts[[1]][2]
 }
 ##########Process data###########
-
+#check folders exist
+if (file.exists(datadir) && file.exists(outputdir)){
 #####Loop through directory
 for (linksfile in list.files(datadir)){
   if (grepl(linkspattern,linksfile)){
@@ -105,5 +106,9 @@ for (linksfile in list.files(datadir)){
 }
   
 print("Processing complete")
+}else{
+  print(paste("Input OR output directory is not found: ", datadir, outputdir))
+  
+}
 
 

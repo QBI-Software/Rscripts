@@ -17,7 +17,7 @@
 #     3. In RStudio, open this file then if necessary modify the directory path, 
 #          filename or output suffix at "CONFIGURE HERE", save and click "Source"
 #
-#   To run from commandline: >Rscript zerovelocity.R --help
+#   To run from commandline: >Rscript allmeanspeed.R --help
 #   
 #   Copyright (C) 2017  QBI Software, The University of Queensland
 # 
@@ -52,8 +52,7 @@ if (opt$help){
 ##### CONFIGURE HERE ############
 #Input directory (edit this if necessary or accept default)
 # eg datadir <- "D:\\Projects\\Meunier_tracking\\vanessa\\data\\input"
-#datadir <- opt$dir
-datadir <- "D:\\Projects\\Meunier_tracking\\vanessa\\data\\input"
+datadir <- opt$dir
 
 #Output directory
 outputdir <- file.path(datadir, "output")
@@ -71,11 +70,13 @@ pc <- function(zerocount,totalcount){
 }
 
 fileid <- function(linksfile){
-  parts <- strsplit(linksfile,'.xls')
-  fileid <- strsplit(parts[[1]],'_')
-  fileid <- fileid[[1]][2]
+  parts <- strsplit(linksfile,'\\.')
+  fileparts <- strsplit(parts[[1]],'_')
+  fileid <- fileparts[[1]][2]
 }
 ##########Process data###########
+#check folders exist
+if (file.exists(datadir) && file.exists(outputdir)){
 #####Loop through directory
 for (linksfile in list.files(datadir)){
   if (grepl(linkspattern,linksfile)){
@@ -97,6 +98,10 @@ for (linksfile in list.files(datadir)){
   }
 }
 print("Processing complete")
+}else{
+  print(paste("Input OR output directory is not found: ", datadir, outputdir))
+  
+}
 
 
 
