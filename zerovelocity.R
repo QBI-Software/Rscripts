@@ -85,8 +85,8 @@ if (file.exists(datadir) && file.exists(outputdir)){
 for (linksfile in list.files(datadir)){
   if (grepl(linkspattern,linksfile)){
     #extract ID
-    fileid <- fileid(linksfile)
-    outputfilename <- paste(fileid, suffix, sep="")
+    fid <- fileid(linksfile)
+    outputfilename <- paste(fid, suffix, sep="")
     #####Calculate frequency of zero velocity in tracks
     df_links <- read.delim(file.path(datadir, linksfile),  header = TRUE, sep = '\t')
     ## Get unique IDs

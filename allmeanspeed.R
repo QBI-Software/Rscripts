@@ -82,12 +82,12 @@ for (linksfile in list.files(datadir)){
   if (grepl(linkspattern,linksfile)){
     print(paste("Loading file: ", linksfile))
     #extract ID
-    fileid <- fileid(linksfile)
+    fid <- fileid(linksfile)
     ##### Read file data
     df_links <- read.delim(file.path(datadir, linksfile),  header = TRUE, sep = '\t')
     ## Get unique IDs
     df_trackids <- data.frame(df_links$TRACK_MEAN_SPEED)
-    colnames(df_trackids) <- c(paste0(fileid,"_TRACK_MEAN_SPEED"))
+    colnames(df_trackids) <- c(paste0(fid,"_TRACK_MEAN_SPEED"))
     ## Append to existing file if it exists
     if (file.exists(outputfile)){
       all_trackids <- read.csv(outputfile, header=TRUE, check.names = FALSE, as.is = TRUE)
