@@ -100,7 +100,7 @@ for (linksfile in list.files(datadir)){
     #Output file as csv and excel (combined)
     write.csv(df_trackids, file = file.path(outputdir, outputfilename))
     write.xlsx(x = df_trackids, file = file.path(outputdir,"all_zerovelocity.xlsx"),
-               sheetName = fileid, row.names = FALSE)
+               sheetName = fid, row.names = FALSE,append=TRUE)
     print(paste("Saving file: ", outputfilename))
   }
 }
