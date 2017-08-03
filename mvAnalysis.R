@@ -6,6 +6,7 @@ library("factoextra")
 library("corrplot")
 
 # Analysing XNAT OPEX data
+#http://www.sthda.com/english/wiki/factominer-and-factoextra-principal-component-analysis-visualization-r-software-and-data-mining
 datadir <- "D:/Data/XNATData/baseline/"
 datafile <- "DMS_baseline.csv"
 df_mv <- read.table(file.path(datadir, datafile), sep=",", header = TRUE)
@@ -71,7 +72,7 @@ diffcorrelated <-function(mydf,cols,topten)
 cor.mat <- cor(df_mv1,use="pairwise.complete.obs")
 corrplot(cor.mat, type="upper", order="hclust", tl.col="black", tl.srt=45)
 
-#print("**Pearson's product-moment correlation - Top matches**")
+print("**Pearson's product-moment correlation - Top matches**")
 agecorrelated(df_mv,df_mv1,10)
 sigcorrelated(df_mv1,20) 
 
