@@ -84,7 +84,13 @@ for (linksfile in list.files(datadir)){
     #extract ID
     fid <- fileid(linksfile)
     ##### Read file data
-    df_links <- read.delim(file.path(datadir, linksfile),  header = TRUE, sep = '\t')
+    ftype <- strsplit(linksfile,'\\.')[[1]][2]
+    if (ftype == 'xls'){
+      separator = '\t';
+    }else{
+      separator = ',';
+    }
+    df_links <- read.delim(file.path(datadir, linksfile),  header = TRUE, sep = separator)
     ## Get unique IDs
     df_trackids <- data.frame(df_links$TRACK_MEAN_SPEED)
     colnames(df_trackids) <- c(paste0(fid,"_TRACK_MEAN_SPEED"))

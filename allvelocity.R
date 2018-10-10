@@ -84,7 +84,13 @@ if (file.exists(datadir) && file.exists(outputdir)){
       #extract ID
       fid <- fileid(linksfile)
       ##### Read file data
-      df_links <- read.delim(file.path(datadir, linksfile),  header = TRUE, sep = '\t')
+      ftype <- strsplit(linksfile,'\\.')[[1]][2]
+      if (ftype == 'xls'){
+        separator = '\t';
+      }else{
+        separator = ',';
+      }
+      df_links <- read.delim(file.path(datadir, linksfile),  header = TRUE, sep = separator)
       ## Get unique IDs
       df_trackids <- data.frame(df_links$VELOCITY)
       colnames(df_trackids) <- c(paste0(fid,"_VELOCITY"))

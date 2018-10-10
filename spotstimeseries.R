@@ -86,11 +86,18 @@ if (file.exists(datadir) && file.exists(outputdir)){
   #####Loop through directory
   for (linksfile in list.files(datadir)){
     if (grepl(linkspattern,linksfile)){
+      print(paste("Loading file: ", linksfile))
       #extract ID
       fid <- fileid(linksfile)
       outputfilename <- paste(fid, suffix, sep="")
       #####Calculate frequency of zero velocity in tracks
-      df_links <- read.delim(file.path(datadir, linksfile),  header = TRUE, sep = '\t')
+      ftype <- strsplit(linksfile,'\\.')[[1]][2]
+      if (ftype == 'xls'){
+        separator = '\t';
+      }else{
+        separator = ',';
+      }
+      df_links <- read.delim(file.path(datadir, linksfile),  header = TRUE, sep = separator)
       # Create Timeseries for POSITION_T
       post_count <- count(df_links$POSITION_T)
       positionTimeseries <- ts(post_count)
